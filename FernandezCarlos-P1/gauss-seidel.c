@@ -73,20 +73,28 @@ void iterate (int N, double **U, double **V) {
 			V[i][j] = f( (i + 1) / (N + 1), (j + 1) / (N + 1) ) ;
 		
 			if (i == 0) {
-				V[i][j] -= g_1(0, (j + 1) / (N + 1)) ;
+				V[i][j] -= g_1((j + 1) / (N + 1)) ;
 			} else {
 				V[i][j] -= V[i - 1][j] ; 
 			}
 			
 			if (i == N - 2) {
-				V[i][j] -= g_2(1, (j + 1) / (N + 1)) ;
+				V[i][j] -= g_2((j + 1) / (N + 1)) ;
 			
 			} else {
 				V[i][j] -= U[i + 1][j] ;
 			}	
 			
-			if (j > 0) V[i][j] -= V[i][j - 1] ; 
-			if (j < N - 1) V[i][j] -= U[i][j + 1] ;
+			if (j == 0) {
+				V[i][j] -= g_3((i + 1) / (N + 1)) ;
+			} else { 
+				V[i][j] -= V[i][j - 1] ; 
+			}
+			if (j == N - 1) {
+				V[i][j] -= g_4((i + 1) / (N + 1)) ;
+			} else {
+				 V[i][j] -= U[i][j + 1] ;
+			}
 
 			V[i][j] *= - (N + 1) * (N + 1) / 4. ;
 		}
