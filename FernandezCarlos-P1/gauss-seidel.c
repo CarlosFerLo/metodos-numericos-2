@@ -3,11 +3,29 @@
 
 #include "functions.h"
 
-void iterate (int N, double **U, double **V) ;
+/* ----- TODO ----- 
+ * 
+ * - Implementar el valored de a y b diferentes de 0 y 1.
+ * - Implementar metodo de parada riguroso.
+ */
+
+#define MAX_FNAME_LEN 25
+
+void iterate (int N, double **U) ;
 
 int main (void) {
 	int N, i, j ;
-	double **U, **V, **Aux ;	
+	double a, b, **U ;
+	char fileName[MAX_FNAME_LEN] ;
+	FILE *f ;
+
+	/* TO BE DELEATED */
+	a = 1. ; 
+	b = 1. ;
+	/* --- */
+	
+
+	/* --- LECTURA DE DATOS Y INICIALIZACIÓN --- */
 
 	/* Leer el valor de N */
 
@@ -30,21 +48,7 @@ int main (void) {
 		}
 	}
 
-	/* Reservar memoria para V */
-	
-	V = (double **) malloc((N - 1) * sizeof(double *)) ;
-	if (V == NULL) {
-		printf("ERROR al asignar memoria para V.") ;
-		return 1 ;
-	}
-
-	for (i = 0; i < N - 1; i++) {
-		V[i] = (double *) malloc((N - 1) * sizeof(double)) ;
-		if (V[i] == NULL) {
-			printf("ERROR al asignar memoria para la fila %d de V.", i) ;
-			return 1 ;
-		}	
-	}
+	/* --- RESOLUCION DEL SISTEMA --- */
 
 	/* Inicializar U */
 
@@ -57,25 +61,56 @@ int main (void) {
 	/* Calcular iteración */
 
 	for (i = 0; i < 100; i++) {
-		iterate(N, U, V) ;
+		iterate(N, U) ;
+	}
+
+	/* --- ESCRITURA DE DATOS --- */
+
+	/* Leer el nombre del archivo de escritura */
 	
-		Aux = U ;
-		U = V ;
-		V = Aux ;
+	printf("Introduce el nombre del archivo de escritura: ") ;
+	scanf("%s", fileName) ;
+
+	/* Abrir archivo de escritura */
+
+	f = fopen(fileName, "w") ;
+	if (f == NULL) {
+		printf("ERROR al abrir el archivo de escritura '%s'.\n", fileName) ;
+		return 1 ;
 	}
+	
+	/* Escribir valores de a, b y N */
 
-	/* Mostrar resultados */
+	fprintf(f, "%le %le %d\n", a, b, N) ;
 
-	printf("\n--- RESULTADOS ---\n") ;
+	/* Escribir primera fila (i = 0) */
 
+	for (j = 0; j < N + 2; j++) {
+		fprintf(f, "%le ", g_1(j / (N + 1))) ;
+	}
+	fprintf(f, "\n") ;
+
+	/* Escribir las filas para i = 1, 2, ..., N */
+	
 	for (i = 0; i < N - 1; i++) {
+		fprintf(f, "%le ", g_3((i + 1) / (N + 1))) ;
+
 		for (j = 0; j < N - 1; j++) {
-			printf(" %le", V[i][j]) ;
+			fprintf(f, "%le ", U[i][j]) ;
 		}
-		printf("\n") ;
+
+		fprintf(f, "%le\n", g_4((i + 1) / (N + 1))) ; 
 	}
 
-	printf("-----------------\n") ;
+	/* Escribir ultima fila (i = N + 1) */
+	
+	for (j = 0; j < N + 2; j++) {
+		fprintf(f, "%le ", g_3(j / (N + 1))) ;
+	}
+
+	/* Cerrar archivo de escritura */
+	
+	fclose(f) ;
 
 
 	/* --- LIVERAR MEMORIA --- */
@@ -88,64 +123,53 @@ int main (void) {
 
 	free(U) ;
 
-	/* Liverar memoria para V */
-
-	for (i = 0; i < N - 1; i++) {
-		free(V[i]) ;
-	}
-
-	free(V) ;
-
 	return 0 ;
 }
 
 
-void iterate (int N, double **U, double **V) {
+void iterate (int N, double **U) {
 	/*
 
 	Calcular el valor del siguiente vector en la serie.
 
-	U: vector actual ( x_k )
-	V: vector nevo ( x_k+1 )
+	U: vector actual ( x_k ) [ MODIFICADO ] -> vector x_k+1
 
 	*/
 	
 	int i, j ;
 
 	for (i = 0; i < N - 1; i++) {
-		
 		for (j = 0; j < N - 1; j++) {
 
-			V[i][j] = - f( (i + 2) / (N + 1.), (j + 2) / (N + 1.) )  ;
-			V[i][j] /= (double) (N + 1) * (N + 1) ;
+			U[i][j] = - f( (i + 2) / (N + 1.), (j + 2) / (N + 1.) )  ;
+			U[i][j] /= (double) (N + 1) * (N + 1) ;
 		
 			if (i == 0) {
-				V[i][j] += g_1((j + 2) / (N + 1.)) ;
+				U[i][j] += g_1((j + 2) / (N + 1.)) ;
 			} else {
-				V[i][j] += V[i - 1][j] ; 
+				U[i][j] += U[i - 1][j] ; 
 			}
 			
 			if (i == N - 2) {
-				V[i][j] += g_2((j + 2) / (N + 1.)) ;
+				U[i][j] += g_2((j + 2) / (N + 1.)) ;
 			
 			} else {
-				V[i][j] += U[i + 1][j] ;
+				U[i][j] += U[i + 1][j] ;
 			}	
 			
 			if (j == 0) {
-				V[i][j] += g_3((i + 2) / (N + 1.)) ;
+				U[i][j] += g_3((i + 2) / (N + 1.)) ;
 			} else { 
-				V[i][j] += V[i][j - 1] ; 
+				U[i][j] += U[i][j - 1] ; 
 			}
 			if (j == N - 1) {
-				V[i][j] += g_4((i + 2) / (N + 1.)) ;
+				U[i][j] += g_4((i + 2) / (N + 1.)) ;
 			} else {
-				 V[i][j] += U[i][j + 1] ;
+				 U[i][j] += U[i][j + 1] ;
 			}
 
-			V[i][j] /= 4. ;
+			U[i][j] /= 4. ;
 		}
-		
 	}
 
 	return ;
