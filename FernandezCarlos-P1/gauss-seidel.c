@@ -34,14 +34,14 @@ int main (void) {
 
 	/* Reservar memoria para U */
 
-	U = (double **) malloc((N - 1) * sizeof(double *)) ;
+	U = (double **) malloc(N * sizeof(double *)) ;
 	if (U == NULL) {
 		printf("ERROR al asignar memoria para U.") ;
 		return 1 ;
 	}
 
-	for (i = 0; i < N - 1; i++) {
-		U[i] = (double *) malloc((N - 1) * sizeof(double)) ;
+	for (i = 0; i < N; i++) {
+		U[i] = (double *) malloc(N * sizeof(double)) ;
 		if (U[i] == NULL) {
 			printf("ERROR al asignar memoria para la fila %d de U.", i) ;
 			return 1 ;
@@ -52,8 +52,8 @@ int main (void) {
 
 	/* Inicializar U */
 
-	for (i = 0; i < N - 1; i++) {
-		for (j = 0; j < N - 1; j++) {
+	for (i = 0; i < N; i++) {
+		for (j = 0; j < N; j++) {
 			U[i][j] = 0. ;	
 		}
 	}
@@ -86,26 +86,26 @@ int main (void) {
 	/* Escribir primera fila (i = 0) */
 
 	for (j = 0; j < N + 2; j++) {
-		fprintf(f, "%le ", g_1(j / (N + 1))) ;
+		fprintf(f, "%le ", g_1(j / (N + 1.))) ;
 	}
 	fprintf(f, "\n") ;
 
 	/* Escribir las filas para i = 1, 2, ..., N */
 	
-	for (i = 0; i < N - 1; i++) {
-		fprintf(f, "%le ", g_3((i + 1) / (N + 1))) ;
+	for (i = 0; i < N; i++) {
+		fprintf(f, "%le ", g_3((i + 1) / (N + 1.))) ;
 
-		for (j = 0; j < N - 1; j++) {
+		for (j = 0; j < N; j++) {
 			fprintf(f, "%le ", U[i][j]) ;
 		}
 
-		fprintf(f, "%le\n", g_4((i + 1) / (N + 1))) ; 
+		fprintf(f, "%le\n", g_4((i + 1) / (N + 1.))) ; 
 	}
 
 	/* Escribir ultima fila (i = N + 1) */
 	
 	for (j = 0; j < N + 2; j++) {
-		fprintf(f, "%le ", g_3(j / (N + 1))) ;
+		fprintf(f, "%le ", g_2(j / (N + 1.))) ;
 	}
 
 	/* Cerrar archivo de escritura */
@@ -117,7 +117,7 @@ int main (void) {
 	
 	/* Liverar memoria para U */
 	
-	for (i = 0; i < N - 1; i++) {
+	for (i = 0; i < N; i++) {
 		free(U[i]) ;
 	}
 
@@ -138,8 +138,8 @@ void iterate (int N, double **U) {
 	
 	int i, j ;
 
-	for (i = 0; i < N - 1; i++) {
-		for (j = 0; j < N - 1; j++) {
+	for (i = 0; i < N; i++) {
+		for (j = 0; j < N; j++) {
 
 			U[i][j] = - f( (i + 2) / (N + 1.), (j + 2) / (N + 1.) )  ;
 			U[i][j] /= (double) (N + 1) * (N + 1) ;
@@ -150,7 +150,7 @@ void iterate (int N, double **U) {
 				U[i][j] += U[i - 1][j] ; 
 			}
 			
-			if (i == N - 2) {
+			if (i == N - 1) {
 				U[i][j] += g_2((j + 2) / (N + 1.)) ;
 			
 			} else {
