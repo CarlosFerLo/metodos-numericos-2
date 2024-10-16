@@ -1,3 +1,5 @@
+double a () ;
+double b () ;
 double f (double, double) ;
 double g_1 (double) ;
 double g_2 (double) ;
