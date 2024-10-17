@@ -4,11 +4,6 @@
 
 #include "functions.h"
 
-/* ----- TODO ----- 
- *
- *
- */
-
 #define MAX_FNAME_LEN 25
 #define ITER_MAX 1000
 
