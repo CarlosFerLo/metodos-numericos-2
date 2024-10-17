@@ -5,7 +5,6 @@
 
 /* ----- TODO ----- 
  * 
- * - Implementar el valored de a y b diferentes de 0 y 1.
  * - Implementar metodo de parada riguroso.
  */
 
@@ -15,15 +14,9 @@ void iterate (int N, double **U) ;
 
 int main (void) {
 	int N, i, j ;
-	double a, b, **U ;
+	double **U ;
 	char fileName[MAX_FNAME_LEN] ;
 	FILE *f ;
-
-	/* TO BE DELEATED */
-	a = 1. ; 
-	b = 1. ;
-	/* --- */
-	
 
 	/* --- LECTURA DE DATOS Y INICIALIZACIÓN --- */
 
@@ -86,26 +79,26 @@ int main (void) {
 	/* Escribir primera fila (i = 0) */
 
 	for (j = 0; j < N + 2; j++) {
-		fprintf(f, "%le ", g_1(j / (N + 1.))) ;
+		fprintf(f, "%le ", g_1(b * j / (N + 1.))) ;
 	}
 	fprintf(f, "\n") ;
 
 	/* Escribir las filas para i = 1, 2, ..., N */
 	
 	for (i = 0; i < N; i++) {
-		fprintf(f, "%le ", g_3((i + 1) / (N + 1.))) ;
+		fprintf(f, "%le ", g_3(a * (i + 1) / (N + 1.))) ;
 
 		for (j = 0; j < N; j++) {
 			fprintf(f, "%le ", U[i][j]) ;
 		}
 
-		fprintf(f, "%le\n", g_4((i + 1) / (N + 1.))) ; 
+		fprintf(f, "%le\n", g_4(a * (i + 1) / (N + 1.))) ; 
 	}
 
 	/* Escribir ultima fila (i = N + 1) */
 	
 	for (j = 0; j < N + 2; j++) {
-		fprintf(f, "%le ", g_2(j / (N + 1.))) ;
+		fprintf(f, "%le ", g_2(b * j / (N + 1.))) ;
 	}
 
 	/* Cerrar archivo de escritura */
@@ -141,29 +134,29 @@ void iterate (int N, double **U) {
 	for (i = 0; i < N; i++) {
 		for (j = 0; j < N; j++) {
 
-			U[i][j] = - f( (i + 2) / (N + 1.), (j + 2) / (N + 1.) )  ;
+			U[i][j] = - f( a * (i + 2) / (N + 1.), b * (j + 2) / (N + 1.) )  ;
 			U[i][j] /= (double) (N + 1) * (N + 1) ;
 		
 			if (i == 0) {
-				U[i][j] += g_1((j + 2) / (N + 1.)) ;
+				U[i][j] += g_1(b * (j + 2) / (N + 1.)) ;
 			} else {
 				U[i][j] += U[i - 1][j] ; 
 			}
 			
 			if (i == N - 1) {
-				U[i][j] += g_2((j + 2) / (N + 1.)) ;
+				U[i][j] += g_2(b * (j + 2) / (N + 1.)) ;
 			
 			} else {
 				U[i][j] += U[i + 1][j] ;
 			}	
 			
 			if (j == 0) {
-				U[i][j] += g_3((i + 2) / (N + 1.)) ;
+				U[i][j] += g_3(a * (i + 2) / (N + 1.)) ;
 			} else { 
 				U[i][j] += U[i][j - 1] ; 
 			}
 			if (j == N - 1) {
-				U[i][j] += g_4((i + 2) / (N + 1.)) ;
+				U[i][j] += g_4(a * (i + 2) / (N + 1.)) ;
 			} else {
 				 U[i][j] += U[i][j + 1] ;
 			}
