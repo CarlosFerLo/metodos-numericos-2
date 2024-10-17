@@ -6,7 +6,6 @@
 
 /* ----- TODO ----- 
  *
- * - Arreglar implementacion de a y b, h_x y h_y son diferentes.
  *
  */
 
@@ -93,30 +92,30 @@ int main (void) {
 				U[i][j] /= (double) (N + 1) * (N + 1) ;
 
 				if (i == 0) {
-					U[i][j] += g_1(b * (j + 2) / (N + 1.)) ;
+					U[i][j] += g_1(b * (j + 2) / (N + 1.)) / (a * a) ;
 				} else {
-					U[i][j] += U[i - 1][j] ;
+					U[i][j] += U[i - 1][j] / (a * a) ;
 				}
 
 				if (i == N - 1) {
-					U[i][j] += g_2(b * (j + 2) / (N + 1.)) ;
+					U[i][j] += g_2(b * (j + 2) / (N + 1.)) / (a * a) ;
 				} else {
-					U[i][j] += U[i + 1][j] ;
+					U[i][j] += U[i + 1][j] / (a * a) ;
 				}
 
 				if (j == 0) {
-					U[i][j] += g_3(a * (i + 2) / (N + 1.)) ;
+					U[i][j] += g_3(a * (i + 2) / (N + 1.)) / (b * b) ;
 				} else {
-					U[i][j] += U[i][j - 1] ;
+					U[i][j] += U[i][j - 1] / (b * b) ;
 				}
 
 				if (j == N - 1) {
-					U[i][j] += g_4(a * (i + 2) / (N + 1.)) ;
+					U[i][j] += g_4(a * (i + 2) / (N + 1.)) / (b * b) ;
 				} else {
-					U[i][j] += U[i][j + 1] ;
+					U[i][j] += U[i][j + 1] / (b * b) ;
 				}
 
-				U[i][j] /= 4. ;
+				U[i][j] /= (2. / (a * a)) + (2 / (b * b)) ;
 
 				/* Computar diferencia y actualizar la norma */
 				if (fabs(oldUij - U[i][j]) > norm) {
