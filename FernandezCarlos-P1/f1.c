@@ -25,3 +25,6 @@ double g_4 (double x) {
 	return 0. ;
 }
 
+double solution (double x, double y) {
+	return  exp(x) * sin (M_PI * y) / (1 - M_PI * M_PI) ;
+}
