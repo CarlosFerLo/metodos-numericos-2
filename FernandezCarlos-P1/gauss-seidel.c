@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "functions.h"
 
 /* ----- TODO ----- 
  *
- * - Eliminar uso de la funcion iterate. 
- * - Implementar metodo de parada riguroso.
+ * - Arreglar implementacion de a y b, h_x y h_y son diferentes.
  *
  */
 
@@ -15,7 +15,7 @@
 
 int main (void) {
 	int N, i, j, k ;
-	double **U ;
+	double tol, norm, oldUij, **U ;
 	char fileName[MAX_FNAME_LEN] ;
 	FILE *file ;
 
@@ -25,6 +25,25 @@ int main (void) {
 
 	printf("Introduzca un valor para N: ") ;
 	scanf(" %d", &N) ;
+
+	/* Comprobar que el valor de N sea valido */
+	
+	if (N < 1) {
+		printf("El valor de N ha de ser positivo! (Valor introducido: %d)\n", N) ;
+		return 1 ;
+	}
+
+	/* Leer el valor de tol */
+	
+	printf("Introduzca la tolerancia deseada: ") ;
+	scanf(" %lf", &tol) ;
+	
+	/* Comprobar que el valor de tol sea valido */
+
+	if (tol <= 0) {
+		printf("La tolerancia ha de ser un valor positivo! (Valor introducido: %le)\n", tol) ;
+		return 1 ;
+	}
 
 	/* Reservar memoria para U */
 
@@ -55,11 +74,20 @@ int main (void) {
 	/* Calcular iteración */
 
 	for (k = 0; k < ITER_MAX; k++) {
+
+		/* Inicializar la norma */
+		norm = 0. ;
 		
 		/* Calcular nuevo valor de U */
 	
 		for (i = 0; i < N; i++) {
 			for (j = 0; j < N; j++) {
+				
+				/* Guardar antiguo valor de Uij */
+
+				oldUij = U[i][j] ;
+
+				/* Calcular el nuevo valor de Uij */
 
 				U[i][j] = -f(a * (i + 2) / (N + 1.), b * (j + 2) / (N + 1.)) ;
 				U[i][j] /= (double) (N + 1) * (N + 1) ;
@@ -89,9 +117,36 @@ int main (void) {
 				}
 
 				U[i][j] /= 4. ;
+
+				/* Computar diferencia y actualizar la norma */
+				if (fabs(oldUij - U[i][j]) > norm) {
+					norm = fabs(oldUij - U[i][j]) ;
+				}
 			}
 		}
+
+		/* Comprobar si se satisface la condicion de parada */
+		if (norm <= tol) {
+			break ;
+		}
 	}
+
+	/* --- LOGS --- */
+
+	printf(" --- PARAMETROS ---\nIter max: %d\nN: %d\na: %le\nb: %le\n\n", ITER_MAX, N, a, b) ;
+
+	printf(" --- RESULTADOS ---\n") ;
+
+	if (k == ITER_MAX) { /* No se ha obtenido la tolerancia deseada */
+		printf("La serie no ha convergido tras %d iteraciones!\n", ITER_MAX + 1) ;
+		printf("Valor de la norma final: %le\n", norm) ;
+
+	} else { /* Si se ha obtenido la tolerancia deseada */
+		printf("La serie ha convergido tras  %d iteraciones.\n", k + 1) ;
+		printf("Valor de la norma final: %le\n", norm) ;
+	}
+
+	printf("\n\n") ;
 
 	/* --- ESCRITURA DE DATOS --- */
 
