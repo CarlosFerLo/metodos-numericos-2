@@ -9,7 +9,7 @@
 
 int main (void) {
 	int N, i, j, k ;
-	double tol, norm, oldUij, **U ;
+	double tol, norm, oldNorm, oldUij, **U ;
 	char fileName[MAX_FNAME_LEN] ;
 	FILE *file ;
 
@@ -67,9 +67,12 @@ int main (void) {
 
 	/* Calcular iteración */
 
+	norm = 0. ;	
+
 	for (k = 0; k < ITER_MAX; k++) {
 
 		/* Inicializar la norma */
+		oldNorm = norm ;
 		norm = 0. ;
 		
 		/* Calcular nuevo valor de U */
@@ -139,6 +142,10 @@ int main (void) {
 		printf("La serie ha convergido tras  %d iteraciones.\n", k + 1) ;
 		printf("Valor de la norma final: %le\n", norm) ;
 	}
+
+	if (k > 0) { /* Mostrar el radio espectral solo si se puede calcular */
+		printf("Radio espectral aproximado: %le\n", norm / oldNorm) ;
+	} 
 
 	printf("\n\n") ;
 
