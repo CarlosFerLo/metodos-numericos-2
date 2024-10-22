@@ -9,7 +9,7 @@
 
 int main (void) {
 	int N, i, j, k ;
-	double tol, norm, oldNorm, oldUij, **U ;
+	double tol, norm, oldUij, **U ;
 	char fileName[MAX_FNAME_LEN] ;
 	FILE *file ;
 
@@ -43,14 +43,14 @@ int main (void) {
 
 	U = (double **) malloc(N * sizeof(double *)) ;
 	if (U == NULL) {
-		printf("ERROR al asignar memoria para U.") ;
+		printf("ERROR al asignar memoria para U.\n") ;
 		return 1 ;
 	}
 
 	for (i = 0; i < N; i++) {
 		U[i] = (double *) malloc(N * sizeof(double)) ;
 		if (U[i] == NULL) {
-			printf("ERROR al asignar memoria para la fila %d de U.", i) ;
+			printf("ERROR al asignar memoria para la fila %d de U.\n", i) ;
 			return 1 ;
 		}
 	}
@@ -67,12 +67,10 @@ int main (void) {
 
 	/* Calcular iteración */
 
-	norm = 0. ;	
-
 	for (k = 0; k < ITER_MAX; k++) {
 
 		/* Inicializar la norma */
-		oldNorm = norm ;
+		
 		norm = 0. ;
 		
 		/* Calcular nuevo valor de U */
@@ -86,29 +84,29 @@ int main (void) {
 
 				/* Calcular el nuevo valor de Uij */
 
-				U[i][j] = -f(a * (i + 2) / (N + 1.), b * (j + 2) / (N + 1.)) ;
+				U[i][j] = -f(a * (i + 1) / (N + 1.), b * (j + 1) / (N + 1.)) ;
 				U[i][j] /= (double) (N + 1) * (N + 1) ;
 
 				if (i == 0) {
-					U[i][j] += g_1(b * (j + 2) / (N + 1.)) / (a * a) ;
+					U[i][j] += g_1(b * (j + 1) / (N + 1.)) / (a * a) ;
 				} else {
 					U[i][j] += U[i - 1][j] / (a * a) ;
 				}
 
 				if (i == N - 1) {
-					U[i][j] += g_2(b * (j + 2) / (N + 1.)) / (a * a) ;
+					U[i][j] += g_2(b * (j + 1) / (N + 1.)) / (a * a) ;
 				} else {
 					U[i][j] += U[i + 1][j] / (a * a) ;
 				}
 
 				if (j == 0) {
-					U[i][j] += g_3(a * (i + 2) / (N + 1.)) / (b * b) ;
+					U[i][j] += g_3(a * (i + 1) / (N + 1.)) / (b * b) ;
 				} else {
 					U[i][j] += U[i][j - 1] / (b * b) ;
 				}
 
 				if (j == N - 1) {
-					U[i][j] += g_4(a * (i + 2) / (N + 1.)) / (b * b) ;
+					U[i][j] += g_4(a * (i + 1) / (N + 1.)) / (b * b) ;
 				} else {
 					U[i][j] += U[i][j + 1] / (b * b) ;
 				}
@@ -137,7 +135,7 @@ int main (void) {
 	printf(" --- RESULTADOS ---\n") ;
 
 	if (k == ITER_MAX) { /* No se ha obtenido la tolerancia deseada */
-		printf("La serie no ha convergido tras %d iteraciones!\n", ITER_MAX + 1) ;
+		printf("La serie no ha convergido tras %d iteraciones!\n", ITER_MAX) ;
 
 	} else { /* Si se ha obtenido la tolerancia deseada */
 		printf("La serie ha convergido tras %d iteraciones.\n", k + 1) ;
@@ -145,12 +143,6 @@ int main (void) {
 
 	printf("Valor de la norma final: %le\n", norm) ;
 	
-	if (k > 0) { /* Mostrar el radio espectral solo si se puede calcular */
-		printf("Radio espectral aproximado: %le\n", norm / oldNorm) ;
-	} 
-
-	printf("\n\n") ;
-
 	/* --- ESCRITURA DE DATOS --- */
 
 	/* Leer el nombre del archivo de escritura */

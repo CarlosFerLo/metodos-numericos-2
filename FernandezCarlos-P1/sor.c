@@ -12,7 +12,7 @@
 
 int main (void) {
 	int N, i, j, k ;
-	double specRad, omega, r, tol, norm, **U ;
+	double omega, r, tol, norm, **U ;
 	char fileName[MAX_FNAME_LEN] ;
 	FILE *file ;
 
@@ -42,10 +42,10 @@ int main (void) {
 		return 1 ;
 	}
 
-	/* Leer el valor del radio espectral */
+	/* Leer el valor de omega */
 
-	printf("Introduce una aproximación del radio espectral: ") ;
-	scanf(" %le", &specRad) ;
+	printf("Introduzca el valor de omega: ") ;
+	scanf(" %lf", &omega) ;
 
 	/* Reservar memoria para U */
 
@@ -73,10 +73,6 @@ int main (void) {
 		}
 	}
 
-	/* Calcular valor optimo de omega */
-
-	omega = 2. / (1 + sqrt(1 - specRad)) ;
-
 	/* Calcular iteracion */
 
 	for (k = 0; k < ITER_MAX; k++) {
@@ -92,29 +88,29 @@ int main (void) {
 				
 				/* Calcular r^(k) */
 				
-				r = -f(a * (i + 2) / (N + 1.), b * (j + 2) / (N + 1.)) ;
+				r = -f(a * (i + 1) / (N + 1.), b * (j + 1) / (N + 1.)) ;
 				r /= (double) (N + 1.) * (N + 1.) ;
 
 				if (i == 0) {
-					r += g_1(b * (j + 2) / (N + 1.)) / (a * a) ;
+					r += g_1(b * (j + 1) / (N + 1.)) / (a * a) ;
 				} else {
 					r += U[i - 1][j] / (a * a) ;
 				}
 
 				if (i == N - 1) {
-					r += g_2(b * (j + 2) / (N + 1.)) / (a * a) ;
+					r += g_2(b * (j + 1) / (N + 1.)) / (a * a) ;
 				} else {
 					r += U[i + 1][j] / (a * a) ;
 				}
 
 				if (j == 0) {
-					r += g_3(a * (i + 2) / (N + 1.)) / (a * a) ;
+					r += g_3(a * (i + 1) / (N + 1.)) / (a * a) ;
 				} else {
 					r += U[i][j - 1] / (b * b) ;
 				}
 
 				if (j == N - 1) {
-					r += g_4(a * (i + 2) / (N + 1.)) / (b * b) ;
+					r += g_4(a * (i + 1) / (N + 1.)) / (b * b) ;
 				} else {
 					r += U[i][j + 1] / (b * b) ;
 				}
@@ -146,7 +142,6 @@ int main (void) {
 	/* --- LOGS --- */
 
 	printf(" --- PARAMETROS ---\nIter max: %d\nN: %d\na: %le\nb: %le\n", ITER_MAX, N, a, b) ;
-	printf("Aproximacion del radio espectral: %le\n", specRad) ;
 	printf("Aproximacion de omega: %le\n\n", omega) ;
 
 	printf(" --- RESULTADOS ---\n") ;
