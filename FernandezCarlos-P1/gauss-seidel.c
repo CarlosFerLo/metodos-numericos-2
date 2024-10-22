@@ -5,7 +5,7 @@
 #include "functions.h"
 
 #define MAX_FNAME_LEN 25
-#define ITER_MAX 1000
+#define ITER_MAX 100000
 
 int main (void) {
 	int N, i, j, k ;
@@ -113,9 +113,10 @@ int main (void) {
 					U[i][j] += U[i][j + 1] / (b * b) ;
 				}
 
-				U[i][j] /= (2. / (a * a)) + (2 / (b * b)) ;
+				U[i][j] /= (2. / (a * a)) + (2. / (b * b)) ;
 
 				/* Computar diferencia y actualizar la norma */
+
 				if (fabs(oldUij - U[i][j]) > norm) {
 					norm = fabs(oldUij - U[i][j]) ;
 				}
@@ -123,6 +124,7 @@ int main (void) {
 		}
 
 		/* Comprobar si se satisface la condicion de parada */
+
 		if (norm <= tol) {
 			break ;
 		}
@@ -136,13 +138,13 @@ int main (void) {
 
 	if (k == ITER_MAX) { /* No se ha obtenido la tolerancia deseada */
 		printf("La serie no ha convergido tras %d iteraciones!\n", ITER_MAX + 1) ;
-		printf("Valor de la norma final: %le\n", norm) ;
 
 	} else { /* Si se ha obtenido la tolerancia deseada */
-		printf("La serie ha convergido tras  %d iteraciones.\n", k + 1) ;
-		printf("Valor de la norma final: %le\n", norm) ;
+		printf("La serie ha convergido tras %d iteraciones.\n", k + 1) ;
 	}
 
+	printf("Valor de la norma final: %le\n", norm) ;
+	
 	if (k > 0) { /* Mostrar el radio espectral solo si se puede calcular */
 		printf("Radio espectral aproximado: %le\n", norm / oldNorm) ;
 	} 
@@ -153,7 +155,7 @@ int main (void) {
 
 	/* Leer el nombre del archivo de escritura */
 	
-	printf("Introduce el nombre del archivo de escritura: ") ;
+	printf("Introduzca el nombre del archivo de escritura: ") ;
 	scanf("%s", fileName) ;
 
 	/* Abrir archivo de escritura */
