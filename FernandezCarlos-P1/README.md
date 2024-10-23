@@ -17,15 +17,15 @@ Una vez se ha archivo anterior, se compilan por separado dicho archivo y "gauss-
 ```
 
 Una vez montado ya tenemos el ejecutable que necesitamos. Mediante `./gauss-seidel.exe` ejecutamos el archivo. Introducimos el valor de N deseado y la tolerancia que se utilizara como condicion de parada. 
-Seguidamente se ejecutará el método iterativo que parará cuando la norma infinito entre terminos consecutivos sea menor a la tolerancia. Se ha definido un numero maximo de iteraciones como medida de seguridad, su valor predeterminado es 1000, si se requere de mas iteraciones cambie el valor de la constante `ITER_MAX` y recompile.
+Seguidamente se ejecutará el método iterativo que parará cuando la norma infinito entre terminos consecutivos sea menor a la tolerancia. Se ha definido un numero maximo de iteraciones como medida de seguridad, su valor predeterminado es 100.000, si se requere de mas iteraciones cambie el valor de la constante `ITER_MAX` y recompile.
 El programa le mostrara si la iteracion ha convergido, en cuantas iteraciones y a que valor de la norma infinito. Adicionalmente se incluye una aproximación del radio espectral de la matriz de iteración que se utilizará más adelante. 
 Finalmente, le pedira un nombre de archivo para guardar la solución, nosotros tomaremos "gauss-seidel.res" a modo de ejemplo. El formato se corresponde con el especificado en el punto 3 de la practica. 
 
 ### SOR
 
-Analogamente al caso anterior, se ha de escribir las condiciones del problema en un archivo, como "f1.c". Se ha de compilar y montar como el caso anterior los archivos "gauss-seidel.c" y "sor.c" para obtener los ejecutables "gauss-seidel.exe" y "sor.exe".
-Se ejecuta el "gauss-seidel.exe" con los parametros N y tolerancia que se pretenden utilizar en "sor.c". Se copia el valor aproximado del radio espectral.
-Ahora se ejecuta el archivo "sor.exe" y se introducen los parametros anteriores junto al valor del radio espectral. Se obtienen los resultados de forma analoga al metodo Gauss-Seidel.
+Analogamente al caso anterior, se ha de escribir las condiciones del problema en un archivo, como "f1.c". Se ha de compilar y montar como el caso anterior los archivos "sor-find-omega.c" y "sor.c" para obtener los ejecutables "sor-find-omega.exe" y "sor.exe".
+Se ejecutara "sor-find-omega.exe" para probar los valores posibles de omega y se seleccionara el que converja mas rapido.
+Ahora se ejecuta el archivo "sor.exe" y se introducen los parametros anteriores junto al valor de omega. Se obtienen los resultados de forma analoga al metodo Gauss-Seidel.
 
 ### Comprobar Errores
 
@@ -33,4 +33,9 @@ Para comprobar si las soluciones dadas por uno de los metodos anteriores se ha d
 
 ## Memoria
 
+### Sistema Lineal
+
+El sistema lineal a resolver es de la forma $Ax = b$, ahora mostraremos A y b para el caso N = 4 y el caso general.
+
+Caso n = 4:
 
