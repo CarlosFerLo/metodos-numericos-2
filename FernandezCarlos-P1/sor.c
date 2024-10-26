@@ -124,8 +124,8 @@ int main (void) {
 					
 				/* Calcular diferencia y actualizar la norma */
 
-				if (fabs(r) > norm) {
-					norm = fabs(r) ;
+				if (fabs(r) / omega > norm) {
+					norm = fabs(r) / omega ;
 				}
 
 			}
