@@ -1,6 +1,6 @@
-# Memoria Practica 1 - Metodos Numéricos II 2024-2025 Otoño
+# Practica 1 - Metodos Numéricos II 2024-2025 Otoño
 
-Este fichero incluye tanto como se ha llegado a los programas como una guia para la utilización de estos.
+Este fichero incluye una guia de uso de los programas, la memoria se encuentra en el archivo [MEMORIA.pdf](MEMORIA.pdf).
 
 ## Guia de uso
 
@@ -30,45 +30,3 @@ Ahora se ejecuta el archivo "sor.exe" y se introducen los parametros anteriores 
 ### Comprobar Errores
 
 Para comprobar si las soluciones dadas por uno de los metodos anteriores se ha de compilar y montar el archivo "check.c" (utilizando el "f1.c" tambien). Entonces se ejecuta y se pasa el nombre del archivo que contiene los datos devueltos por uno de los programas anteriores. Este devuelve la norma infinito del vector diferencia del vector del archivo y el calculado por la funcion 'solution'.
-
-## Memoria
-
-### Sistema Lineal
-
-El sistema lineal a resolver es de la forma $Ax = b$, ahora mostraremos $A$ y $b$ para el caso $N = 4$ y el caso general.
-
-Caso $N = 4$:
-
-![Matriz del caso N = 4](https://github.com/user-attachments/assets/43e6e4d2-b1b3-4991-90e1-50b6fd351b8e)
-
-\left ( \begin{matrix}
-f(0.25, 0.25) + g_1 (0.25) + g_3 (0.25)\\
-f(0.25, 0.5) + g_3(0.5) \\
-f(0.25, 0.75) + g_3(0.75) \\
-f(0.5, 0.25) + g_1 (0.5) \\
-f(0.5, 0.5) \\
-f(0.5, 0.75) + g_2 (0.5) \\
-f(0.75, 0.25) + g_4 (0.25) + \\
-f(0.75, 0.5) \\
-f(0.75, 0.75)
-\end{matrix}
-\right )
-
-Caso general:
-
-![Matriz caso general](https://github.com/user-attachments/assets/ae68dbc7-b9e0-4304-ab2f-5803c0e5623f)
-
-![Matriz T](https://github.com/user-attachments/assets/89c1ee01-f0c7-4fe8-bdf5-8cf718ba0522)
-
-Donde la matriz $T$ es $N - 1$ por $N - 1$, las matrices $I$ son las identidad de la misma dimensionalidad, y la matriz del caso general tiene $N - 1$ bloques de altura y anchura.
-
-### Expresiones explicitas de las iteraciones
-
-Se basa en la notacion establecida en la practica.
-
-#### Gauss-Seidel
-
-
-
-
-
