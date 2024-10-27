@@ -6,9 +6,6 @@
 
 #define ITER_MAX 1000
 #define MAX_FNAME_LEN 25
-/* --- TODO ---
- *
- */
 
 int main (void) {
 	int N, i, j, k ;
@@ -104,7 +101,7 @@ int main (void) {
 				}
 
 				if (j == 0) {
-					r += g_3(a * (i + 1) / (N + 1.)) / (a * a) ;
+					r += g_3(a * (i + 1) / (N + 1.)) / (b * b) ;
 				} else {
 					r += U[i][j - 1] / (b * b) ;
 				}
