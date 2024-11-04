@@ -3,3 +3,5 @@
 *.dad
 *.res
 *.swp
+../.DS_Store
+.DS_Store
