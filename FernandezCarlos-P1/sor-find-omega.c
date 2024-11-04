@@ -4,7 +4,7 @@
 
 #include "functions.h" 
 
-#define ITER_MAX 1000
+#define ITER_MAX 10000
 
 int main (void) {
 	int N, i, j, k, optimal_k ;
