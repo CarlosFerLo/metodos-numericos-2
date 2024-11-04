@@ -4,7 +4,7 @@
 
 #include "functions.h" 
 
-#define ITER_MAX 1000
+#define ITER_MAX 100000
 #define MAX_FNAME_LEN 25
 
 int main (void) {
