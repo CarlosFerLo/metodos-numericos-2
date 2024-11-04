@@ -8,7 +8,7 @@
 
 int main (void) {
 	int N, i, j, k, optimal_k ;
-	double omega, optimalOmega, r, tol, norm, paso,**U ;
+	double omega, minOmega, optimalOmega, r, tol, norm, paso,**U ;
 
 	/* --- LECTURA DE DATOS E INICIALIZACIÓN --- */
 
@@ -33,6 +33,18 @@ int main (void) {
 
 	if (tol <= 0) {
 		printf("La tolerancia ha de ser un valor positivo! (Valor introducido: %le)\n", tol) ;
+		return 1 ;
+	}
+
+	/* Leer el valor minimo de Omega */
+
+	printf("Introduzca el primer valor de omega a contemplar: ") ;
+	scanf(" %lf", &minOmega) ;
+
+	/* Comprobar que el valor de minimo de Omega */
+
+	if (minOmega >= 2 || minOmega <= 0) {
+		printf("El valor minimo de omega ha de ser un valor entre 0 y 2! (Valor introducido: %le)\n", minOmega) ;
 		return 1 ;
 	}
 
@@ -69,7 +81,7 @@ int main (void) {
 	optimal_k = ITER_MAX ;	
 	optimalOmega = paso ;
 
-	for (omega = paso; omega < 2.; omega += paso) {	
+	for (omega = minOmega; omega < 2.; omega += paso) {	
 
 		/* Inicializar U */
 	
@@ -130,7 +142,7 @@ int main (void) {
 						
 					/* Calcular diferencia y actualizar la norma */
 
-					if (fabs(r) / oemga > norm) {
+					if (fabs(r) / omega > norm) {
 						norm = fabs(r) / omega ;
 					}
 
@@ -142,7 +154,13 @@ int main (void) {
 			if (norm <= tol) {
 				break ;
 			}
-	
+			
+			/* Si el valor de k es mayor al optimo pasar al siguiente valor de omega */	
+
+			if (k >= optimal_k) {
+				continue ;
+			}			
+
 		}
 
 		/* Actualizar valor de omega optimo */		
