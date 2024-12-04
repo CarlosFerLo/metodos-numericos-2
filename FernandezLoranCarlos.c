@@ -11,7 +11,7 @@ double f (double x, double y) ;
 double dfdx (double x, double y) ;
 double dfdy (double x, double y) ;
 
-double newton_y (int imax, double prec, double y) ; /* TODO: Control de division entre 0 */
+double newton_y (int imax, double prec, double tol, double y) ;
 void pred (double h, double tol, double x, double y, double* dx, double* dy, double* pred_x, double* pred_y) ; /* TODO: Calculo d u y v fuera para optimizar? */
 void correccion (double h, int imax, double prec, double tol, double x0, double y0, double* x, double* y ) ;
 
@@ -102,7 +102,7 @@ int main (void) {
 	/* Calcular un cero de f en el eje de ordenadas */
 	
 	x0 = X_INIT ;
-	y0 = newton_y(imax, prec, Y_INIT) ;
+	y0 = newton_y(imax, prec, tol, Y_INIT) ;
 
 	/* Guardar en el archivo de escritura */
 
@@ -110,8 +110,6 @@ int main (void) {
 
 	/* --- CALCULAR LOS SIGUIENTES PUNTOS DE LA CURVA (Sentido 1) --- */
 	
-	printf("DEBUG: Calculando en el primer sentido...\n") ;
-
 	/* Inicializar x1 y y1 */
 
 	x1 = x0 ;
@@ -150,11 +148,7 @@ int main (void) {
 		y1 = y2 ; 
 	}
 
-	printf("DEBUG: los %d puntos en sentido 1 calculados!\n", (N - 1) / 2) ;
-	
 	/* --- CALCULAR LOS SIGUIENTES PUNTOS DE LA CURVA (Sentido 2) --- */
-
-	printf("DEBUG: Calculando en el segundo sentido...\n") ;
 
 	/* Inicializar x1 y y1 */
 	
@@ -194,8 +188,6 @@ int main (void) {
 		y1 = y2 ;
 	}
 
-	printf("DEBUG: Los %d puntos en sentido 2 calculados!\n", (N - 1)/2) ;
-	
 	/* Cerrar archivo de escritura */
 
 	fclose(file) ;
@@ -215,10 +207,15 @@ double dfdy (double x, double y) {
 	return -2*x - 4 + 14*y - 12*y*y + 4*y*y*y + x*exp(x*y) ;
 }
 
-double newton_y (int imax, double prec, double y) {
+double newton_y (int imax, double prec, double tol, double y) {
 	int i ;
 
 	for (i = 0; i < imax; i++) {
+		if(fabs(-4 + 14*y -12*y*y + 4*y*y*y) < tol) {
+			printf("ERROR: Peligro de division por cero en la funcion 'newton_y'.\n") ;
+			exit(1) ;
+		}
+		
 		y -= (-1 - 4*y + 7*y*y - 4*y*y*y + y*y*y*y) / (-4 + 14*y - 12*y*y + 4*y*y*y) ;
 
 		if (fabs(-1 - 4*y + 7*y*y - 4*y*y*y + y*y*y*y) < prec) {
