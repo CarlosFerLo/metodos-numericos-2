@@ -127,9 +127,6 @@ int main (void) {
 		/* Calcular predicción y actualizar dirección */
 	
 		pred(h, tol,  x1, y1, &dx, &dy, &x2, &y2) ;
-		
-		printf("DEBUG: dx = %le, dy = %le\n", dx, dy) ;
-		printf("DEBUG: x2 = %le, y2 = %le\n", x2, y2) ;
 
 		/* Corregir la predicción */
 			
@@ -137,7 +134,7 @@ int main (void) {
 
 		/* Comprobar que no es el punto inicial */
 
-		if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) < h*h) {
+		if (i > 1 && (x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) < h*h) {
 			break ;
 		}
 
@@ -201,12 +198,12 @@ void pred (double h, double tol, double x, double y, double* dx, double* dy, dou
 		exit(1) ;
 	}
 
-	if (*dy * v - *dx * u< 0) {
-		*dx =  	(h * v) / sqrt(u*u + v*v) ;
-		*dy = - (h * u) / sqrt(u*u + v*v) ;
+	if (*dy * v - *dx * u < 0) {
+		*dx = -	(h * v) / sqrt(u*u + v*v) ;
+		*dy =   (h * u) / sqrt(u*u + v*v) ;
 	} else {
-		*dx = - (h * v) / sqrt(u*u + v*v) ;
-		*dy =  	(h * u) / sqrt(u*u + v*v) ;
+		*dx =   (h * v) / sqrt(u*u + v*v) ;
+		*dy = -	(h * u) / sqrt(u*u + v*v) ;
 	}
 
 	*pred_x = x + *dx ;
@@ -217,50 +214,33 @@ void pred (double h, double tol, double x, double y, double* dx, double* dy, dou
 
 void correccion (double h, int imax, double prec, double tol, double x0, double y0, double* x, double* y ) {
 	int i ;
-	double  z1, den, u ;
+	double den, u, v, z0, z1;
 
 	for (i = 0; i < imax; i++) {
-
-		printf("DEBUG: --- i = %d ---\n", i) ;
 
 		/* Calcular el denominador y ver si es demasiado pequeño */
 
 		u = dfdx(*x, *y) ;
+		v = dfdy(*x, *y) ;
 
-		printf("DEBUG: dfdx = %le\n", u) ;
-		
-		den = (*y - y0) * u - (*x - x0) * dfdy(*x, *y) ;
+		den = 2 * ( (*y - y0) * u - (*x - x0) * v ) ;
 	
 		if (fabs(den) < tol) {
-			printf("ERROR: Peligro de division por cero en la función 'correccion' iteración %d.\n\n --- PARAMETROS ---\n", i+1);
+			printf("ERROR: Peligro de division por cero en la función 'correccion' iteración %d, sistema incompatible.\n\n --- PARAMETROS ---\n", i+1);
 			printf("h = %le\nimax = %d\nprec = %le\ntol = %le\nx0 = %le\ny0 = %le\n", h, imax, prec, tol, x0, y0) ;
 			exit(1) ; 
 		}
 
-		/* Calcular z1 */
-
-		z1 = ( (*x - x0) * f(*x, *y) + 0.5 * u * (h*h - (*x - x0)*(*x - x0) - (*y - y0)*(*y - y0)) ) / den ;
-
-		printf("DEBUG: z1 = %le\n", z1) ;
+		/* Calcular solución del sistema */
 	
-		/* Calcular el denominador y ver si es demasiado pequeño */
+		z0 = ( v * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0) - h*h) - 2 * (*y - y0) * f(*x, *y) ) / den ;
+		z1 = (- u * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0)) + 2 * (*x - x0) * f(*x, *y)) / den ;
 
-		den = 2 * (*x - x0) ;
-
-				
-		if (fabs(den) < tol) {
-			printf("ERROR: Peligro de division por cero en la función 'correccion' iteración %d.\n\n --- PARAMETROS ---\n", i+1);
-			printf("h = %le\nimax = %d\nprec = %le\ntol = %le\nx0 = %le\n y0 = %le\n", h, imax, prec, tol, x0, y0) ;
-			exit(1) ; 
-		}
-	
 		/* Actualizar x e y */
 
-		*x += ( h*h - den - (*y - y0)*(*y - y0) - 2 * (*y - y0) * z1 ) / den ;
+		*x += z0 ;
 		*y += z1 ;
 	
-		printf("DEBUG: x = %le, y = %le\n", *x, *y) ;
-
 		/* Comprovar si se satisfacen las condiciones de convergencia */
 
 		if (fabs(f(*x, *y)) < prec) {
@@ -268,7 +248,7 @@ void correccion (double h, int imax, double prec, double tol, double x0, double 
 		}
 	}
 
-	printf("ERROR: La corrección no ha convergido tras %d iteraciones!\n --- PARAMETROS ---\n", imax) ;
+	printf("ERROR: La corrección no ha convergido tras %d iteraciones!\n\n --- PARAMETROS ---\n", imax) ;
 	printf("h = %le\nimax = %d\nprec = %le\ntol = %le\nx0 = %le\ny0 = %le\n", h, imax, prec, tol, x0, y0) ;
 	printf("x = %le\ny = %le\n", *x, *y) ;
 
