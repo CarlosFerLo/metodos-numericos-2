@@ -12,7 +12,7 @@ double dfdx (double x, double y) ;
 double dfdy (double x, double y) ;
 
 double newton_y (int imax, double prec, double tol, double y) ;
-void pred (double h, double tol, double x, double y, double* dx, double* dy, double* pred_x, double* pred_y) ; /* TODO: Calculo d u y v fuera para optimizar? */
+void pred (double h, double tol, double x, double y, double* dx, double* dy, double* pred_x, double* pred_y) ;
 void correccion (double h, int imax, double prec, double tol, double x0, double y0, double* x, double* y ) ;
 
 int main (void) {
