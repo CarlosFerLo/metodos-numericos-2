@@ -5,7 +5,7 @@
 #define MAX_FNAME_LEN 25
 
 #define X_INIT 0.0
-#define Y_INIT 0.0
+#define Y_INIT 2.0
 
 double f (double x, double y) ;
 double dfdx (double x, double y) ;
@@ -108,7 +108,9 @@ int main (void) {
 
 	fprintf(file, "%le %le\n", x0, y0) ;
 
-	/* --- CALCULAR LOS SIGUIENTES PUNTOS DE LA CURVA --- */
+	/* --- CALCULAR LOS SIGUIENTES PUNTOS DE LA CURVA (Sentido 1) --- */
+	
+	printf("DEBUG: Calculando en el primer sentido...\n") ;
 
 	/* Inicializar x1 y y1 */
 
@@ -122,7 +124,7 @@ int main (void) {
 
 	/* Calculo iterativo de los puntos de la curva */
 
-	for (i = 1; i < N; i++) {
+	for (i = 0; i < (N - 1) / 2; i++) {
 
 		/* Calcular predicción y actualizar dirección */
 	
@@ -134,7 +136,7 @@ int main (void) {
 
 		/* Comprobar que no es el punto inicial */
 
-		if (i > 1 && (x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) < h*h) {
+		if (i > 0 && (x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) < h*h) {
 			break ;
 		}
 
@@ -148,7 +150,52 @@ int main (void) {
 		y1 = y2 ; 
 	}
 
+	printf("DEBUG: los %d puntos en sentido 1 calculados!\n", (N - 1) / 2) ;
+	
+	/* --- CALCULAR LOS SIGUIENTES PUNTOS DE LA CURVA (Sentido 2) --- */
+
+	printf("DEBUG: Calculando en el segundo sentido...\n") ;
+
+	/* Inicializar x1 y y1 */
+	
+	x1 = x0 ;
+	y1 = y0 ;
+
+	/* Fijar una dirección inicial (opuesta a la anterior) */
+
+	dx = -dfdx(x0, y0) - 1 ;
+	dy = -dfdy(x0, y0) ;
+
+	/* Calculo iterativo de los puntos de la curva */
+
+	for (i = 0; i < (N - 1) / 2.; i++) {
 		
+		/* Calcular prediccion y actualizar dirección */
+
+		pred(h, tol, x1, y1, &dx, &dy, &x2, &y2) ;
+
+		/* Corregir la predicción */
+
+		correccion (h, imax, prec, tol, x1, y1, &x2, &y2) ;
+
+		/* Comprobar que no es el punto inicial */
+
+		if (i > 0 && (x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) < h*h) {
+			break ;
+		}
+
+		/* Guardar en el archivo de escritura */
+
+		fprintf(file, "%le %le\n", x2, y2) ;
+
+		/* Actualizar x1 y y1 */
+
+		x1 = x2 ;
+		y1 = y2 ;
+	}
+
+	printf("DEBUG: Los %d puntos en sentido 2 calculados!\n", (N - 1)/2) ;
+	
 	/* Cerrar archivo de escritura */
 
 	fclose(file) ;
@@ -169,10 +216,6 @@ double dfdy (double x, double y) {
 }
 
 double newton_y (int imax, double prec, double y) {
-/* 
-	El objetivo de esta función es aproximar un cero de f en el eje de las ordenadas. Esto se debe a que en el caso de las abcisas, la funcion no tiene ceros, y en este caso si los hay son más sencillos de calcular dado que:
-	f(0, y) = 3 - 4*y + 7*y*y - 4*y*y*y + y*y*y*y
-*/
 	int i ;
 
 	for (i = 0; i < imax; i++) {
