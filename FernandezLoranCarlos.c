@@ -5,7 +5,7 @@
 #define MAX_FNAME_LEN 25
 
 #define X_INIT 0.0
-#define Y_INIT 2.0
+#define Y_INIT 0.0
 
 double f (double x, double y) ;
 double dfdx (double x, double y) ;
@@ -223,31 +223,52 @@ double newton_y (int imax, double prec, double tol, double y) {
 		}
 	}
 
-	printf("ERROR: El método de Newton no ha convergido tras %d iteraciones!\n", imax) ;
+	printf("ERROR: El metodo de Newton no ha convergido tras %d iteraciones!\n", imax) ;
 	exit(1) ;	
 }
 
 void pred (double h, double tol, double x, double y, double* dx, double* dy, double* pred_x, double* pred_y) {
-	double u, v ;
+	double u, v, den ;
 
 	u = dfdx(x, y) ;
 	v = dfdy(x, y) ;
+	den = sqrt(u*u + v*v) ;
 
-	if (sqrt(u*u + v*v) < tol) {
+	/* Comprobar que la norma del vector dirección de la curba es no nula */
+
+	if (den < tol) {
 		printf("ERROR: Peligro de division por cero en la funcion 'pred'.\n") ;
 		exit(1) ;
 	}
 
-	if (*dy * v - *dx * u < 0) {
-		*dx = -	(h * v) / sqrt(u*u + v*v) ;
-		*dy =   (h * u) / sqrt(u*u + v*v) ;
-	} else {
-		*dx =   (h * v) / sqrt(u*u + v*v) ;
-		*dy = -	(h * u) / sqrt(u*u + v*v) ;
-	}
+	/* Normalizar el vector dirección */
 
-	*pred_x = x + *dx ;
-	*pred_y = y + *dy ;
+	u /= den ;
+	v /= den ;
+
+	/* Comprobar que el producto escalar de la dirección anterior y la nueva son no nulos */
+		
+	den = *dy * u - *dx * v ;
+
+	if (fabs(den) < tol) {
+		printf("ERROR: Producto escalar cercano a cero en la función 'pred'. Imposible predecir la nueva orientacion.\n") ;
+		exit(1) ;
+	}
+	
+	/* Comprobar que el nuevo vector tiene un sentido compatible con el anterior */
+
+	if (den > 0) {
+		*dx = -	 v ;
+		*dy =    u ;
+	} else {
+		*dx =    v ;
+		*dy = -	 u ;
+	}
+	
+	/* Asignar valores a las predicciones */
+
+	*pred_x = x + *dx * h ;
+	*pred_y = y + *dy * h ;
 
 	return ;
 }
@@ -266,15 +287,14 @@ void correccion (double h, int imax, double prec, double tol, double x0, double 
 		den = 2 * ( (*y - y0) * u - (*x - x0) * v ) ;
 	
 		if (fabs(den) < tol) {
-			printf("ERROR: Peligro de division por cero en la función 'correccion' iteración %d, sistema incompatible.\n\n --- PARAMETROS ---\n", i+1);
-			printf("h = %le\nimax = %d\nprec = %le\ntol = %le\nx0 = %le\ny0 = %le\n", h, imax, prec, tol, x0, y0) ;
+			printf("ERROR: Peligro de division por cero en la función 'correccion' iteración %d, sistema incompatible.\n", i+1);
 			exit(1) ; 
 		}
 
 		/* Calcular solución del sistema */
 	
-		z0 = ( v * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0) - h*h) - 2 * (*y - y0) * f(*x, *y) ) / den ;
-		z1 = (- u * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0)) + 2 * (*x - x0) * f(*x, *y)) / den ;
+		z0 = (   v * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0) - h*h) - 2 * (*y - y0) * f(*x, *y) ) / den ;
+		z1 = ( - u * ((*x - x0)*(*x - x0) + (*y - y0)*(*y - y0) - h*h) + 2 * (*x - x0) * f(*x, *y) ) / den ;
 
 		/* Actualizar x e y */
 
@@ -288,10 +308,7 @@ void correccion (double h, int imax, double prec, double tol, double x0, double 
 		}
 	}
 
-	printf("ERROR: La corrección no ha convergido tras %d iteraciones!\n\n --- PARAMETROS ---\n", imax) ;
-	printf("h = %le\nimax = %d\nprec = %le\ntol = %le\nx0 = %le\ny0 = %le\n", h, imax, prec, tol, x0, y0) ;
-	printf("x = %le\ny = %le\n", *x, *y) ;
-
+	printf("ERROR: La corrección no ha convergido tras %d iteraciones!\n", imax) ;
 	exit(1) ;
 
 }
