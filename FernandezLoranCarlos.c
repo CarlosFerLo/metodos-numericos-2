@@ -188,6 +188,8 @@ int main (void) {
 		y1 = y2 ;
 	}
 
+	/* --- CLEAN UP --- */
+
 	/* Cerrar archivo de escritura */
 
 	fclose(file) ;
@@ -211,17 +213,26 @@ double newton_y (int imax, double prec, double tol, double y) {
 	int i ;
 
 	for (i = 0; i < imax; i++) {
+		
+		/* Comprobar que el denominador no es cercano a cero */
+
 		if(fabs(-4 + 14*y -12*y*y + 4*y*y*y) < tol) {
 			printf("ERROR: Peligro de division por cero en la funcion 'newton_y'.\n") ;
 			exit(1) ;
 		}
+
+		/* Actualizar el valor de y */
 		
 		y -= (-1 - 4*y + 7*y*y - 4*y*y*y + y*y*y*y) / (-4 + 14*y - 12*y*y + 4*y*y*y) ;
+
+		/* Comprobar se se satisface la condición de parada */
 
 		if (fabs(-1 - 4*y + 7*y*y - 4*y*y*y + y*y*y*y) < prec) {
 			return y ;
 		}
 	}
+
+	/* Parar la ejecución del programa si el método no converge */
 
 	printf("ERROR: El metodo de Newton no ha convergido tras %d iteraciones!\n", imax) ;
 	exit(1) ;	
@@ -307,6 +318,8 @@ void correccion (double h, int imax, double prec, double tol, double x0, double 
 			return ;
 		}
 	}
+
+	/* Parar la ejecución del programa si el método no converge */
 
 	printf("ERROR: La corrección no ha convergido tras %d iteraciones!\n", imax) ;
 	exit(1) ;
